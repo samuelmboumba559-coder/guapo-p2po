@@ -4,6 +4,7 @@ from kivy.lang import Builder
 from kivy.clock import Clock
 import urllib.request, json
 from datetime import datetime
+
 KV="""
 <GuapoLayout>:
  orientation: 'vertical'
@@ -30,16 +31,17 @@ KV="""
    font_size: '20sp'
   Label:
    id: profit
-   text: 'Profit 50k: 0'
+   text: 'Profit 50k: 0 XAF'
+   bold: True
  Button:
   id: btn
   text: 'DEMARRER'
   font_size: '20sp'
-  bold: True
   background_color: 0,0.8,0,1
   size_hint_y: 0.3
   on_press: root.toggle()
 """
+
 def get_prix(t):
  url="https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"
  d=json.dumps({"asset":"USDT","fiat":"XAF","page":1,"rows":1,"tradeType":t,"payTypes":[]}).encode()
@@ -48,6 +50,7 @@ def get_prix(t):
   with urllib.request.urlopen(req,timeout=10) as r:
    return float(json.loads(r.read().decode())['data'][0]['adv']['price'])
  except: return 0
+
 class GuapoLayout(BoxLayout):
  running=False
  def toggle(self):
@@ -67,8 +70,10 @@ class GuapoLayout(BoxLayout):
    self.ids.vendeur.text=f"Vendeur: {v:.1f} XAF"
    self.ids.acheteur.text=f"Acheteur: {a:.1f} XAF"
    self.ids.profit.text=f"Profit: {((50000/v)*(a-v)):.0f} XAF"
+
 class GuapoApp(App):
  def build(self):
   Builder.load_string(KV)
   return GuapoLayout()
+
 GuapoApp().run()
